@@ -36,15 +36,16 @@ services:
     restart: unless-stopped
     ports:
       - "[::1]:1790:1790"
-      - "${HTTP_HOST:-0.0.0.0}:${HTTP_API:-8699}:${HTTP_API:-8699}"
+      - "${HTTP_HOST:-0.0.0.0}:${HTTP_API:-8699}:8699"
     depends_on:
       bhs:
         condition: service_healthy
     command:
       - "-webhookUrlStart=http://bhs:5000/flap-alert"
       - "-webhookUrlEnd=http://bhs:5000/flap-end"
-      - "-httpAPIListenAddress=${HTTP_HOST:-0.0.0.0}:${HTTP_API:-8699}"
+      - "-httpAPIListenAddress=0.0.0.0:8699"
       - "-historyEnable=true"
+      - "-historyDir=/tmp/flap_history"
       - "-asn=${ASN:-4242420000}"
 
 volumes:
