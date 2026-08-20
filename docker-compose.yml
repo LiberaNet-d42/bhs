@@ -40,10 +40,10 @@ services:
       bhs:
         condition: service_healthy
     command:
-      - "-webhookUrlStart http://bhs:5000/flap-alert"
-      - "-webhookUrlEnd http://bhs:5000/flap-end"
-      - "-historyEnable true"
-      - "-asn ${ASN:-4242420000}"
+      - "-webhookUrlStart=http://bhs:5000/flap-alert"
+      - "-webhookUrlEnd=http://bhs:5000/flap-end"
+      - "-historyEnable=true"
+      - "-asn=${ASN:-4242420000}"
 
 volumes:
   bhs_data:
