@@ -1,0 +1,49 @@
+services:
+  bhs:
+    build: .
+    container_name: blackhole-sentinel
+    restart: unless-stopped
+    ports:
+      - "${PORT:-5000}:5000"
+    environment:
+      - ROA_URL=${ROA_URL:-https://dn42.burble.com/roa/dn42_roa_46.json}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DATA_DIR=/data
+    volumes:
+      - bhs_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  stayrtr:
+    image: rpki/stayrtr:latest
+    container_name: stayrtr
+    restart: unless-stopped
+    depends_on:
+      bhs:
+        condition: service_healthy
+    command:
+      - "-cache=http://bhs:5000/roa"
+
+  flapalerted:
+    image: ghcr.io/kioubit/flapalerted:latest
+    container_name: flapalerted
+    restart: unless-stopped
+    depends_on:
+      bhs:
+        condition: service_healthy
+    command:
+      - "-webhookUrlStart"
+      - "http://bhs:5000/flap-alert"
+      - "-webhookUrlEnd"
+      - "http://bhs:5000/flap-end"
+      - "-historyEnable"
+      - "true"
+      - "-asn"
+      - "${ASN:-<YOUR_ASN>}"
+
+volumes:
+  bhs_data:
