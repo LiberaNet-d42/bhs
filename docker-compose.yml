@@ -4,7 +4,7 @@ services:
     container_name: blackhole-sentinel
     restart: unless-stopped
     ports:
-      - "${PORT:-5000}:5000"
+      - "127.0.0.1:${PORT:-5000}:5000"
     environment:
       - ROA_URL=${ROA_URL:-https://dn42.burble.com/roa/dn42_roa_46.json}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
@@ -22,6 +22,8 @@ services:
     image: rpki/stayrtr:latest
     container_name: stayrtr
     restart: unless-stopped
+    ports:
+      - "8282:8282"
     depends_on:
       bhs:
         condition: service_healthy
@@ -32,6 +34,8 @@ services:
     image: ghcr.io/kioubit/flapalerted:latest
     container_name: flapalerted
     restart: unless-stopped
+    ports:
+      - "[::1]:1790:1790"
     depends_on:
       bhs:
         condition: service_healthy
@@ -43,7 +47,7 @@ services:
       - "-historyEnable"
       - "true"
       - "-asn"
-      - "${ASN:-<YOUR_ASN>}"
+      - "${ASN:-4242420000}"
 
 volumes:
   bhs_data:
