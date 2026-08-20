@@ -36,7 +36,7 @@ services:
     restart: unless-stopped
     ports:
       - "[::1]:1790:1790"
-      - "8699:8699"
+      - "${HTTP_HOST:-0.0.0.0}:${HTTP_API:-8699}:${HTTP_API:-8699}"
     depends_on:
       bhs:
         condition: service_healthy
