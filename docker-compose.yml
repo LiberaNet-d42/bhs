@@ -43,6 +43,7 @@ services:
     command:
       - "-webhookUrlStart=http://bhs:5000/flap-alert"
       - "-webhookUrlEnd=http://bhs:5000/flap-end"
+      - "-httpAPIListenAddress=${HTTP_HOST:-0.0.0.0}:${HTTP_API:-8699}"
       - "-historyEnable=true"
       - "-asn=${ASN:-4242420000}"
 
